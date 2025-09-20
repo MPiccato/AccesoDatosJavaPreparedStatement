@@ -15,6 +15,8 @@ public class Cuenta {
 
     private static final String SQL_SELECT = "SELECT * FROM CUENTAS;";
 
+    private static final String SQL_UPDATE = "UPDATE CUENTAS SET SALDO = ? WHERE ID = ?";
+
     public static void main(String[] args) {
 
         Connection connection = null;
@@ -44,12 +46,43 @@ public class Cuenta {
 
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt(1) +
-                        " - Num Cuenta: " + rs.getInt(2) +
+                        " - Número Cuenta: " + rs.getInt(2) +
                         " - Titular: " + rs.getString(3) +
                         " - Saldo: $" + rs.getDouble(4) + "----"
                 );
 
             }
+
+
+            // Actualizar datos
+            connection.setAutoCommit(false); //evito que la base de datos se actualice sin haber verificado los datos
+
+            PreparedStatement preparedStatementUpdate = connection.prepareStatement(SQL_UPDATE);
+
+            //CARGA DE LOS DATOS CAMBIADOS
+            preparedStatementUpdate.setDouble(1,5000);
+            preparedStatementUpdate.setInt(2,1);
+            preparedStatementUpdate.execute();
+
+            connection.commit();
+
+            //Buena práctica es volver a setear el commit en TRUE
+            connection.setAutoCommit(true);
+
+            ResultSet rsUpdate = statement.executeQuery(SQL_SELECT);
+
+            System.out.println("---Saldo Cambiado---");
+
+            while (rsUpdate.next()) {
+                System.out.println("ID: " + rsUpdate.getInt(1) +
+                        " - Número Cuenta: " + rsUpdate.getInt(2) +
+                        " - Titular: " + rsUpdate.getString(3) +
+                        " - Saldo: $" + rsUpdate.getDouble(4) + "----"
+                );
+
+            }
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
