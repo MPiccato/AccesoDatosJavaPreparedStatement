@@ -85,6 +85,13 @@ public class Cuenta {
 
 
         } catch (Exception e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex){
+                ex.printStackTrace();
+
+            }
+
             e.printStackTrace();
         } finally {
             try {
